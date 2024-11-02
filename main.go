@@ -93,7 +93,7 @@ func (sm *StableMap[K, V]) Length() int {
 	return len(sm.index)
 }
 
-// Entries provides stable range over
+// Entries() provides stable "range over" iteration
 func (sm *StableMap[K, V]) Entries() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
 		for _, k := range sm.index {

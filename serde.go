@@ -4,15 +4,16 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
+type kvpair[K comparable, V any] struct {
+	K K `msgpack:"k"`
+	V V `msgpack:"v"`
+}
+
 func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
 
-	type kvpair struct {
-		K K
-		V V
-	}
-	pairs := make([]kvpair, 0, len(sm.index))
+	pairs := make([]kvpair[K, V], 0, len(sm.index))
 	for k, v := range sm.Entries() {
-		kvp := kvpair{k, v}
+		kvp := kvpair[K, V]{k, v}
 		pairs = append(pairs, kvp)
 	}
 	return msgpack.Marshal(pairs)
@@ -20,12 +21,7 @@ func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
 
 func (sm *StableMap[K, V]) UnmarshalBinary(p []byte) error {
 
-	type kvpair struct {
-		K K
-		V V
-	}
-
-	var pairs []kvpair
+	var pairs []kvpair[K, V]
 
 	err := msgpack.Unmarshal(p, &pairs)
 	if err != nil {
