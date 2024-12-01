@@ -8,7 +8,7 @@ import (
 )
 
 // StableMap is a map whose keys are ordered, and whose operations are concurrency safe
-// and which marshals itself into predictable, deterministic bytes
+// and which marshals itself into predictable, deterministic bytes.
 type StableMap[K comparable, V any] struct {
 	sync.RWMutex
 	m     map[K]V
@@ -42,15 +42,15 @@ func (sm *StableMap[K, V]) IndexOf(key K) int {
 func (sm *StableMap[K, V]) DeleteAt(i int) {
 	k := sm.index[i]
 	delete(sm.m, k)
-	sm.removeElementAtIndex(i)
+	sm.removeElementAt(i)
 }
 
 // remove element at the specified index, or panic
-func (sm *StableMap[K, V]) removeElementAtIndex(i int) {
+func (sm *StableMap[K, V]) removeElementAt(i int) {
 	sm.index = slices.Delete(sm.index, i, i+1)
 }
 
-// delete an element
+// delete an element by key
 func (sm *StableMap[K, V]) Delete(k K) error {
 	i := sm.IndexOf(k)
 	if i < 0 {
@@ -60,7 +60,7 @@ func (sm *StableMap[K, V]) Delete(k K) error {
 	defer sm.Unlock()
 	delete(sm.m, k)
 	if i > -1 {
-		sm.removeElementAtIndex(i)
+		sm.removeElementAt(i)
 	}
 	return nil
 }
@@ -73,6 +73,15 @@ func (sm *StableMap[K, V]) Set(key K, val V) {
 	sm.m[key] = val
 	if !exists {
 		sm.index = append(sm.index, key)
+	}
+}
+
+func (sm *StableMap[K, V]) Incorporate(m map[K]V) {
+	if m == nil {
+		return
+	}
+	for k, v := range m {
+		sm.Set(k, v)
 	}
 }
 
@@ -105,9 +114,23 @@ func (sm *StableMap[K, V]) Entries() iter.Seq2[K, V] {
 	}
 }
 
+func (sm *StableMap[K, V]) AsMap() map[K]V {
+	m := map[K]V{}
+	for k, v := range sm.Entries() {
+		m[k] = v
+	}
+	return m
+}
+
 func New[K comparable, V any]() *StableMap[K, V] {
 	return &StableMap[K, V]{
 		m:     map[K]V{},
 		index: []K{},
 	}
+}
+
+func From[K comparable, V any](m map[K]V) *StableMap[K, V] {
+	sm := New[K, V]()
+	sm.Incorporate(m)
+	return sm
 }

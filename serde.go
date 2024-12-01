@@ -11,6 +11,10 @@ type kvpair[K comparable, V any] struct {
 
 func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
 
+	if sm == nil {
+		return nil, nil
+	}
+
 	pairs := make([]kvpair[K, V], 0, len(sm.index))
 	for k, v := range sm.Entries() {
 		kvp := kvpair[K, V]{k, v}
@@ -20,6 +24,10 @@ func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
 }
 
 func (sm *StableMap[K, V]) UnmarshalBinary(p []byte) error {
+
+	if p == nil {
+		return nil
+	}
 
 	var pairs []kvpair[K, V]
 
