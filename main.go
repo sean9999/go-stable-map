@@ -20,8 +20,10 @@ func New[K comparable, V any]() *StableMap[K, V] {
 	}
 }
 
-func From[K comparable, V any](m map[K]V) StableMap[K, V] {
+func From[K comparable, V any](m map[K]V) *StableMap[K, V] {
 	sm := New[K, V]()
-	sm.Incorporate(m)
-	return *sm
+	if m != nil {
+		sm.Incorporate(m)
+	}
+	return sm
 }
