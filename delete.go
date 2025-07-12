@@ -18,13 +18,11 @@ func (sm *StableMap[K, V]) delete(k K) error {
 		return fmt.Errorf("key %v did not exist", k)
 	}
 	delete(sm.m, k)
-	if i > -1 {
-		sm.removeElementAt(i)
-	}
+	sm.removeElementAt(i)
 	return nil
 }
 
-// delete an element by key
+// Delete deletes an element by key
 func (sm *StableMap[K, V]) Delete(k K) error {
 	sm.Lock()
 	defer sm.Unlock()

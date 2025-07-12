@@ -1,12 +1,12 @@
 package stablemap
 
 // Import imports another StableMap
-func (a *StableMap[K, V]) Import(b *StableMap[K, V]) {
-	if b == nil || a == nil {
+func (sm *StableMap[K, V]) Import(b *StableMap[K, V]) {
+	if b == nil || sm == nil {
 		return
 	}
 	for k, v := range b.Entries() {
-		a.Set(k, v)
+		sm.Set(k, v)
 	}
 }
 
