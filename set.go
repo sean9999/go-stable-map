@@ -16,7 +16,7 @@ func (sm *StableMap[K, V]) set(key K, val V) error {
 	return nil
 }
 
-// add or update an element
+// Set adds or updates an element in a thread-safe manner
 func (sm *StableMap[K, V]) Set(key K, val V) error {
 	sm.Lock()
 	defer sm.Unlock()
