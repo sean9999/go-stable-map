@@ -65,9 +65,8 @@ func (am *ActiveMap[K, V]) Delete(k K) error {
 }
 
 func (am *ActiveMap[K, V]) Events() <-chan Result[K, V] {
-	if am.events != nil {
-		ch := make(chan Result[K, V])
-		am.events = ch
+	if am.events == nil {
+		am.events = make(chan Result[K, V])
 	}
 	return am.events
 }
