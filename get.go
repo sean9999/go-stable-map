@@ -5,7 +5,7 @@ func (sm *StableMap[K, V]) get(k K) (V, bool) {
 	return v, exists
 }
 
-// get a value and a bolean indicating if there actually was something there
+// Get gets a value and a boolean indicating if there actually was something there
 func (sm *StableMap[K, V]) Get(k K) (V, bool) {
 	sm.RLock()
 	defer sm.RUnlock()

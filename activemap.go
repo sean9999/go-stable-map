@@ -12,23 +12,21 @@ type Result[K comparable, V any] struct {
 // ActiveMap is a StableMap that emits events when it mutates.
 type ActiveMap[K comparable, V any] struct {
 	*StableMap[K, V]
-	Events chan Result[K, V]
+	events chan Result[K, V]
 }
 
 // NewActiveMap instantiates a new ActiveMap
 func NewActiveMap[K comparable, V any]() *ActiveMap[K, V] {
 	sm := New[K, V]()
-	events := make(chan Result[K, V])
 	return &ActiveMap[K, V]{
 		StableMap: sm,
-		Events:    events,
 	}
 }
 
 func (am *ActiveMap[K, V]) Set(k K, v V) error {
 	am.Lock()
 	defer am.Unlock()
-	oldVal, _ := am.StableMap.Get(k)
+	oldVal, _ := am.StableMap.get(k)
 	err := am.StableMap.set(k, v)
 	if err != nil {
 		return err
@@ -39,7 +37,9 @@ func (am *ActiveMap[K, V]) Set(k K, v V) error {
 		OldVal: oldVal,
 		NewVal: v,
 	}
-	am.Events <- res
+	if am.events != nil {
+		am.events <- res
+	}
 	return nil
 }
 
@@ -47,7 +47,7 @@ func (am *ActiveMap[K, V]) Delete(k K) error {
 	am.Lock()
 	defer am.Unlock()
 	var zeroVal V
-	oldVal, _ := am.StableMap.Get(k)
+	oldVal, _ := am.StableMap.get(k)
 	err := am.StableMap.delete(k)
 	if err != nil {
 		return err
@@ -58,6 +58,16 @@ func (am *ActiveMap[K, V]) Delete(k K) error {
 		OldVal: oldVal,
 		NewVal: zeroVal,
 	}
-	am.Events <- res
+	if am.events != nil {
+		am.events <- res
+	}
 	return nil
+}
+
+func (am *ActiveMap[K, V]) Events() <-chan Result[K, V] {
+	if am.events != nil {
+		ch := make(chan Result[K, V])
+		am.events = ch
+	}
+	return am.events
 }
