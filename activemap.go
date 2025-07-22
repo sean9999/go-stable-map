@@ -23,7 +23,7 @@ func NewActiveMap[K comparable, V any]() *ActiveMap[K, V] {
 	}
 }
 
-func (am *ActiveMap[K, V]) Set(k K, v V) error {
+func (am *ActiveMap[K, V]) Set(k K, v V, fn func(res Result[K, V]) string) error {
 	am.Lock()
 	defer am.Unlock()
 	oldVal, _ := am.StableMap.get(k)
@@ -31,13 +31,16 @@ func (am *ActiveMap[K, V]) Set(k K, v V) error {
 	if err != nil {
 		return err
 	}
-	res := Result[K, V]{
-		Action: "set",
-		Key:    k,
-		OldVal: oldVal,
-		NewVal: v,
-	}
 	if am.events != nil {
+		res := Result[K, V]{
+			Action: "set",
+			Key:    k,
+			OldVal: oldVal,
+			NewVal: v,
+		}
+		if fn != nil {
+			res.Msg = fn(res)
+		}
 		am.events <- res
 	}
 	return nil
@@ -52,19 +55,21 @@ func (am *ActiveMap[K, V]) Delete(k K) error {
 	if err != nil {
 		return err
 	}
-	res := Result[K, V]{
-		Action: "delete",
-		Key:    k,
-		OldVal: oldVal,
-		NewVal: zeroVal,
-	}
 	if am.events != nil {
+		res := Result[K, V]{
+			Action: "delete",
+			Key:    k,
+			OldVal: oldVal,
+			NewVal: zeroVal,
+		}
 		am.events <- res
 	}
 	return nil
 }
 
 func (am *ActiveMap[K, V]) Events() <-chan Result[K, V] {
+	am.Lock()
+	defer am.Unlock()
 	if am.events == nil {
 		am.events = make(chan Result[K, V])
 	}
