@@ -10,7 +10,7 @@ func (sm *StableMap[K, V]) Import(b *StableMap[K, V]) {
 	}
 }
 
-// Incorporate incoporates a map, merging it with existing entries
+// Incorporate incorporates a map, merging it with existing entries
 func (sm *StableMap[K, V]) Incorporate(m map[K]V) {
 	if m == nil {
 		return

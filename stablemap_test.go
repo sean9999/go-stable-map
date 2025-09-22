@@ -72,3 +72,28 @@ func TestStableMap_Set(t *testing.T) {
 	assert.Equal(t, bytes1, bytes2)
 
 }
+
+func TestLexicalRange(t *testing.T) {
+	sm := stablemap.New[string, int]()
+	sm.Set("fig", 6)
+	sm.Set("apple", 1)
+	sm.Set("cherry", 3)
+	sm.Set("date", 4)
+	sm.Set("elderberry", 5)
+	sm.Set("banana", 2)
+	i := 0
+	ovals := []string{
+		"apple",
+		"banana",
+		"cherry",
+		"date",
+		"elderberry",
+		"fig",
+	}
+	for k, _ := range stablemap.LexicalRange[string, int](*sm) {
+		j := sm.IndexOf(k)
+		assert.Equal(t, i, j)
+		assert.Equal(t, ovals[i], k)
+		i++
+	}
+}

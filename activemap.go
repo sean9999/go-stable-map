@@ -1,5 +1,9 @@
 package stablemap
 
+import (
+	"fmt"
+)
+
 // A Result is emitted whenever an ActiveMap mutates
 type Result[K comparable, V any] struct {
 	Action string
@@ -40,6 +44,8 @@ func (am *ActiveMap[K, V]) Set(k K, v V, fn func(res Result[K, V]) string) error
 		}
 		if fn != nil {
 			res.Msg = fn(res)
+		} else {
+			res.Msg = fmt.Sprintf("%v was %v and is now %v", k, oldVal, v)
 		}
 		am.events <- res
 	}
