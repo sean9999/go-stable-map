@@ -46,3 +46,12 @@ func From[K comparable, V any](m map[K]V) *StableMap[K, V] {
 	}
 	return sm
 }
+
+func LexicalFrom[K cmp.Ordered, V any](m map[K]V) *LexicalStableMap[K, V] {
+	sm := NewLexical[K, V][K, V]()
+	if m != nil {
+		sm.Incorporate(m)
+	}
+	slices.Sort(sm.index)
+	return sm
+}
