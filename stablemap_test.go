@@ -97,3 +97,28 @@ func TestLexicalRange(t *testing.T) {
 		i++
 	}
 }
+
+func TestLexicalStableMap(t *testing.T) {
+	sm := stablemap.NewLexical[string, int]()
+	sm.Set("fig", 6)
+	sm.Set("apple", 1)
+	sm.Set("cherry", 3)
+	sm.Set("date", 4)
+	sm.Set("elderberry", 5)
+	sm.Set("banana", 2)
+	i := 0
+	ovals := []string{
+		"apple",
+		"banana",
+		"cherry",
+		"date",
+		"elderberry",
+		"fig",
+	}
+	for k, _ := range sm.Entries() {
+		j := sm.IndexOf(k)
+		assert.Equal(t, i, j)
+		assert.Equal(t, ovals[i], k)
+		i++
+	}
+}
