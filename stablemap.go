@@ -48,7 +48,7 @@ func From[K comparable, V any](m map[K]V) *StableMap[K, V] {
 }
 
 func LexicalFrom[K cmp.Ordered, V any](m map[K]V) *LexicalStableMap[K, V] {
-	sm := NewLexical[K, V][K, V]()
+	sm := NewLexical[K, V]()
 	if m != nil {
 		sm.Incorporate(m)
 	}
