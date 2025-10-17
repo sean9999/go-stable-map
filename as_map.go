@@ -1,6 +1,6 @@
 package stablemap
 
-func (sm *StableMap[K, V]) AsMap() map[K]V {
+func (sm *Map[K, V]) AsMap() map[K]V {
 	// sm.Lock()
 	// defer sm.Unlock()
 	if sm == nil {

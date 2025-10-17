@@ -13,9 +13,9 @@ type Result[K comparable, V any] struct {
 	Msg    string
 }
 
-// ActiveMap is a StableMap that emits events when it mutates.
+// ActiveMap is a Map that emits events when it mutates.
 type ActiveMap[K comparable, V any] struct {
-	*StableMap[K, V]
+	*Map[K, V]
 	events chan Result[K, V]
 }
 
@@ -23,15 +23,15 @@ type ActiveMap[K comparable, V any] struct {
 func NewActiveMap[K comparable, V any]() *ActiveMap[K, V] {
 	sm := New[K, V]()
 	return &ActiveMap[K, V]{
-		StableMap: sm,
+		Map: sm,
 	}
 }
 
 func (am *ActiveMap[K, V]) Set(k K, v V, fn func(res Result[K, V]) string) error {
 	am.Lock()
 	defer am.Unlock()
-	oldVal, _ := am.StableMap.get(k)
-	err := am.StableMap.set(k, v)
+	oldVal, _ := am.Map.get(k)
+	err := am.Map.set(k, v)
 	if err != nil {
 		return err
 	}
@@ -56,8 +56,8 @@ func (am *ActiveMap[K, V]) Delete(k K) error {
 	am.Lock()
 	defer am.Unlock()
 	var zeroVal V
-	oldVal, _ := am.StableMap.get(k)
-	err := am.StableMap.delete(k)
+	oldVal, _ := am.Map.get(k)
+	err := am.Map.delete(k)
 	if err != nil {
 		return err
 	}

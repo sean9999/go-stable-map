@@ -6,13 +6,13 @@ import (
 )
 
 // delete the element at a specific index, or panic
-func (sm *StableMap[K, V]) DeleteAt(i int) {
+func (sm *Map[K, V]) DeleteAt(i int) {
 	k := sm.index[i]
 	delete(sm.m, k)
 	sm.removeElementAt(i)
 }
 
-func (sm *StableMap[K, V]) delete(k K) error {
+func (sm *Map[K, V]) delete(k K) error {
 	i := sm.indexOf(k)
 	if i < 0 {
 		return fmt.Errorf("key %v did not exist", k)
@@ -23,7 +23,7 @@ func (sm *StableMap[K, V]) delete(k K) error {
 }
 
 // Delete deletes an element by key
-func (sm *StableMap[K, V]) Delete(k K) error {
+func (sm *Map[K, V]) Delete(k K) error {
 	sm.Lock()
 	defer sm.Unlock()
 	return sm.delete(k)
@@ -37,6 +37,6 @@ func omit[T comparable](i int, things []T) []T {
 }
 
 // remove element at the specified index, or panic
-func (sm *StableMap[K, V]) removeElementAt(i int) {
+func (sm *Map[K, V]) removeElementAt(i int) {
 	sm.index = slices.Delete(sm.index, i, i+1)
 }

@@ -6,7 +6,7 @@ import (
 
 type kvset [][2]any
 
-func (sm StableMap[K, V]) MarshalJSON() ([]byte, error) {
+func (sm Map[K, V]) MarshalJSON() ([]byte, error) {
 	var zeroValue K
 	omap := make(kvset, 0)
 	for k, v := range sm.Entries() {
@@ -20,7 +20,7 @@ func (sm StableMap[K, V]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(omap)
 }
 
-func (sm *StableMap[K, V]) UnmarshalJSON(b []byte) error {
+func (sm *Map[K, V]) UnmarshalJSON(b []byte) error {
 	var omap kvset
 	err := json.Unmarshal(b, &omap)
 	if err != nil {

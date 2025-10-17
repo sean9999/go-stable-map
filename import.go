@@ -1,7 +1,7 @@
 package stablemap
 
-// Import imports another StableMap
-func (sm *StableMap[K, V]) Import(b *StableMap[K, V]) {
+// Import imports another Map
+func (sm *Map[K, V]) Import(b *Map[K, V]) {
 	if b == nil || sm == nil {
 		return
 	}
@@ -11,7 +11,7 @@ func (sm *StableMap[K, V]) Import(b *StableMap[K, V]) {
 }
 
 // Incorporate incorporates a map, merging it with existing entries
-func (sm *StableMap[K, V]) Incorporate(m map[K]V) {
+func (sm *Map[K, V]) Incorporate(m map[K]V) {
 	if m == nil {
 		return
 	}

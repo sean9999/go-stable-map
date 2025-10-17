@@ -2,7 +2,7 @@ package stablemap
 
 import "github.com/sean9999/pear"
 
-func (sm *StableMap[K, V]) Length() int {
+func (sm *Map[K, V]) Length() int {
 	sm.RLock()
 	defer sm.RUnlock()
 	if len(sm.index) != len(sm.m) {

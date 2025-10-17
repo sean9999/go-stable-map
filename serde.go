@@ -11,7 +11,7 @@ type kvpair[K comparable, V any] struct {
 	V V `msgpack:"v"`
 }
 
-func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
+func (sm *Map[K, V]) MarshalBinary() ([]byte, error) {
 	if sm == nil {
 		return nil, nil
 	}
@@ -23,12 +23,12 @@ func (sm *StableMap[K, V]) MarshalBinary() ([]byte, error) {
 	return msgpack.Marshal(pairs)
 }
 
-func (lm *LexicalStableMap[K, V]) MarshalBinary() ([]byte, error) {
+func (lm *LexicalMap[K, V]) MarshalBinary() ([]byte, error) {
 	slices.Sort(lm.index)
-	return lm.StableMap.MarshalBinary()
+	return lm.Map.MarshalBinary()
 }
 
-func (sm *StableMap[K, V]) UnmarshalBinary(p []byte) error {
+func (sm *Map[K, V]) UnmarshalBinary(p []byte) error {
 	if p == nil {
 		return nil
 	}

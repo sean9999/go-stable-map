@@ -99,7 +99,7 @@ func TestLexicalRange(t *testing.T) {
 }
 
 func TestLexicalStableMap(t *testing.T) {
-	sm := stablemap.NewLexical[string, int]()
+	sm := stablemap.NewLexicalMap[string, int]()
 	sm.Set("fig", 6)
 	sm.Set("apple", 1)
 	sm.Set("cherry", 3)
