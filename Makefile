@@ -1,10 +1,9 @@
 REPO=github.com/sean9999/go-stable-map
-SEMVER := $$(git tag --sort=-version:refname | head -n 1)
 BRANCH := $$(git branch --show-current)
 REF := $$(git describe --dirty --tags --always)
 
 info:
-	@printf "REPO:\t%s\nSEMVER:\t%s\nBRANCH:\t%s\nREF:\t%s\n" $(REPO) $(SEMVER) $(BRANCH) $(REF)
+	@printf "REPO:\t%s\nBRANCH:\t%s\nREF:\t%s\n" $(REPO) $(BRANCH) $(REF)
 
 
 tidy:
@@ -22,7 +21,7 @@ docs: pkgsite
 	pkgsite -open .
 
 publish:
-	GOPROXY=https://goproxy.io,direct go list -m ${REPO}@${SEMVER}
+	GOPROXY=https://goproxy.io,direct go list -m ${REPO}@${REF}
 
 test:
 	git restore testdata
